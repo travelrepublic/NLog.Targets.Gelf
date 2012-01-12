@@ -1,4 +1,5 @@
-NLog.Targets.Gelf is a custom target for NLog version 2.0 and Graylog2 server version 0.9.5.
+NLog.Targets.Gelf is a custom target for NLog version 2.0 and Graylog2 server version 0.9.5p2.
+I've checked it against Graylog2 version 0.9.6 and short messages seem to work although chunking doesn't at the moment.
 
 To use NLog.Targets.Gelf just add the following to your config file and place NLog.Targets.Gelf.dll in the same location as the NLog.dll file:
 
