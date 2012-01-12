@@ -19,3 +19,5 @@ To use NLog.Targets.Gelf just add the following to your config file and place NL
 Just remember to add in your server URL (without http://) or IP address.
 
 This project was an amalgamation of NLog.Targets.Syslog (https://github.com/graffen/NLog.Targets.Syslog) and Gelf4Net (https://github.com/jjchiw/gelf4net).  Thanks to those guys for their code.
+
+This project is also using Newtonsoft.Json.dll (http://json.codeplex.com/) for json serialization.
