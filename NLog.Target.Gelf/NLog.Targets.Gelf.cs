@@ -22,7 +22,19 @@ namespace NLog.Targets
 
         private const int _shortMessageLength = 250;
         private const string _gelfVersion = "1.0";
-        private const int _maxHeaderSize = 32;
+        private int _maxHeaderSize
+        {
+            get
+            {
+                switch(GraylogVersion)
+                {
+                    case "0.9.6":
+                        return 8;
+                    default: // Default to version "0.9.5".
+                        return 32;
+                }
+            }
+        }
 
         #endregion
 
@@ -33,6 +45,7 @@ namespace NLog.Targets
         public string Sender { get; set; }
         public string Facility { get; set; }
         public int MaxChunkSize { get; set; }
+        public string GraylogVersion { get; set; }
 
         #endregion
 
@@ -182,15 +195,26 @@ namespace NLog.Targets
             //Message ID: 32 bytes
             result.AddRange(Encoding.Default.GetBytes(messageId).ToArray<byte>());
 
-            //Sequence Number: 2 bytes (The sequence number of this chunk)
-            result.Add(Convert.ToByte(0));
-            result.Add(Convert.ToByte(chunkNumber));
-
-            //Total Number: 2 bytes (How many chunks does this message consist of in total)
-            result.Add(Convert.ToByte(0));
-            result.Add(Convert.ToByte(chunkCount));
+            result.AddRange(GetChunkPart(chunkNumber, chunkCount));
 
             return result.ToArray<byte>();
+        }
+
+        private byte[] GetChunkPart(int chunkNumber, int chunkCount)
+        {
+            var bytes = new List<byte>();
+
+            if (GraylogVersion != "0.9.6")
+                bytes.Add(Convert.ToByte(0));
+
+            bytes.Add(Convert.ToByte(chunkNumber));
+
+            if (GraylogVersion != "0.9.6")
+                bytes.Add(Convert.ToByte(0));
+
+            bytes.Add(Convert.ToByte(chunkCount));
+
+            return bytes.ToArray();
         }
 
         private string GenerateMessageId(string serverHostName)
