@@ -20,7 +20,7 @@ namespace NLog.Targets
         #region Private Members
 
         private const int ShortMessageLength = 250;
-        private const string GelfVersion = "1.0";
+        private const string GelfVersion = "1.1";
 
         private int MaxHeaderSize
         {
@@ -97,7 +97,11 @@ namespace NLog.Targets
 
         private void SendMessage(string gelfServer, int serverPort, string message)
         {
-            var ipAddress = Dns.GetHostAddresses(gelfServer).FirstOrDefault().ToString();
+            var hostAddress = Dns.GetHostAddresses(gelfServer).FirstOrDefault();
+
+            if (hostAddress == null) return;
+
+            var ipAddress = hostAddress.ToString();
             using (var udpClient = new UdpClient(ipAddress, serverPort))
             {
                 var gzipMessage = GzipMessage(message);
@@ -144,7 +148,7 @@ namespace NLog.Targets
 
         private static int GetGelfSeverity(LogLevel logLevel)
         {
-            var logLevelToReturn = GelfSeverity.Notice;
+            var logLevelToReturn = GelfSeverity.Trace;
 
             if (logLevel == LogLevel.Fatal)
                 logLevelToReturn = GelfSeverity.Emergency;
@@ -153,13 +157,13 @@ namespace NLog.Targets
             else if (logLevel == LogLevel.Warn)
                 logLevelToReturn = GelfSeverity.Warning;
             else if (logLevel == LogLevel.Info)
-                logLevelToReturn = GelfSeverity.Informational;
+                logLevelToReturn = GelfSeverity.Info;
             else if (logLevel == LogLevel.Debug)
                 logLevelToReturn = GelfSeverity.Debug;
             else if (logLevel == LogLevel.Trace)
-                logLevelToReturn = GelfSeverity.Notice;
+                logLevelToReturn = GelfSeverity.Trace;
 
-            return (int) logLevelToReturn;
+            return (int)logLevelToReturn;
         }
 
         private string CreateGelfJsonFromLoggingEvent(string body, Exception exception, LogLevel level)
@@ -170,11 +174,9 @@ namespace NLog.Targets
             var gelfMessage = new GelfMessage
                 {
                     Facility = Facility ?? "GELF",
-                    File = "",
                     FullMessage = body,
                     Host = machine,
                     Level = GetGelfSeverity(level),
-                    Line = "",
                     ShortMessage = shortMessage,
                     TimeStamp = DateTime.Now,
                     Version = GelfVersion
@@ -233,12 +235,12 @@ namespace NLog.Targets
         private string GenerateMessageId(string serverHostName)
         {
             var md5String = String.Join("", MD5.Create().ComputeHash(Encoding.Default.GetBytes(serverHostName)).Select(it => it.ToString("x2")).ToArray());
-            var random = new Random((int) DateTime.Now.Ticks);
-            var sb = new StringBuilder();
+            var random = new Random((int)DateTime.Now.Ticks);
             var t = DateTime.Now.Ticks % 1000000000;
             var s = String.Format("{0}{1}", md5String.Substring(0, 10), md5String.Substring(20, 10));
             var r = random.Next(10000000).ToString("00000000");
 
+            var sb = new StringBuilder(64);
             sb.Append(t);
             sb.Append(s);
             sb.Append(r);
@@ -258,8 +260,8 @@ namespace NLog.Targets
             Critical = 2,
             Error = 3,
             Warning = 4,
-            Notice = 5,
-            Informational = 6,
+            Trace = 5,
+            Info = 6,
             Debug = 7
         };
 
@@ -272,9 +274,6 @@ namespace NLog.Targets
         [JsonProperty("facility")]
         public string Facility { get; set; }
 
-        [JsonProperty("file")]
-        public string File { get; set; }
-
         [JsonProperty("full_message")]
         public string FullMessage { get; set; }
 
@@ -283,9 +282,6 @@ namespace NLog.Targets
 
         [JsonProperty("level")]
         public int Level { get; set; }
-
-        [JsonProperty("line")]
-        public string Line { get; set; }
 
         [JsonProperty("short_message")]
         public string ShortMessage { get; set; }
@@ -296,10 +292,10 @@ namespace NLog.Targets
         [JsonProperty("version")]
         public string Version { get; set; }
 
-        [JsonProperty("exception_message")]
+        [JsonProperty("_exception_message")]
         public string ExceptionMessage { get; set; }
 
-        [JsonProperty("exception_stack_trace")]
+        [JsonProperty("_exception_stack_trace")]
         public string StackTrace { get; set; }
     }
 }
