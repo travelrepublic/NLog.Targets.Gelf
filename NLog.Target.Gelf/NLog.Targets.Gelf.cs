@@ -172,27 +172,31 @@ namespace NLog.Targets
             var machine = Dns.GetHostName();
 
             var gelfMessage = new GelfMessage
-                {
-                    Facility = Facility ?? "GELF",
-                    FullMessage = body,
-                    Host = machine,
-                    Level = GetGelfSeverity(level),
-                    ShortMessage = shortMessage,
-                    TimeStamp = DateTime.Now,
-                    Version = GelfVersion
-                };
+            {
+                Facility = Facility ?? "GELF",
+                FullMessage = body,
+                Host = machine,
+                Level = GetGelfSeverity(level),
+                ShortMessage = shortMessage,
+                TimeStamp = DateTime.Now,
+                Version = GelfVersion
+            };
 
             if (exception == null) return JsonConvert.SerializeObject(gelfMessage);
 
-            var exceptioToLog = exception;
+            var exceptionsToLog = exception.FlattenHierarchy().ToList();
 
-            while (exceptioToLog.InnerException != null)
+            var exceptionMessageBuilder = new StringBuilder();
+            var exceptionStackTraceBuilder = new StringBuilder();
+
+            foreach (var ex in exceptionsToLog)
             {
-                exceptioToLog = exceptioToLog.InnerException;
+                exceptionMessageBuilder.AppendLine(ex.Message);
+                exceptionStackTraceBuilder.AppendLine(ex.StackTrace);
             }
 
-            gelfMessage.ExceptionMessage = exceptioToLog.Message;
-            gelfMessage.StackTrace = exceptioToLog.StackTrace;
+            gelfMessage.ExceptionMessage = exceptionMessageBuilder.ToString();
+            gelfMessage.StackTrace = exceptionStackTraceBuilder.ToString();
 
             return JsonConvert.SerializeObject(gelfMessage);
         }
@@ -297,5 +301,38 @@ namespace NLog.Targets
 
         [JsonProperty("_exception_stack_trace")]
         public string StackTrace { get; set; }
+    }
+
+    internal static class ExceptionExtensions
+    {
+        public static IEnumerable<Exception> FlattenHierarchy(this Exception ex)
+        {
+            if (ex == null)
+            {
+                throw new ArgumentNullException("ex");
+            }
+
+            if (ex is AggregateException)
+            {
+                var aggregateException = (AggregateException)ex;
+
+                var exception = aggregateException.Flatten();
+
+                foreach (var innerException in exception.InnerExceptions)
+                {
+                    yield return innerException;
+                }
+            }
+            else
+            {
+                var innerException = ex;
+                do
+                {
+                    yield return innerException;
+                    innerException = innerException.InnerException;
+                }
+                while (innerException != null);
+            }
+        }
     }
 }

@@ -31,6 +31,12 @@ namespace TestApp
                 case "buttonWarn":
                     _logger.Warn("This is a sample warn message");
                     break;
+                case "buttonAggregateError":
+                    _logger.Error("This is a sample aggregate error message", GetAggregateException());
+                    break;
+                case "buttonInnerError":
+                    _logger.Error("This is a sample inner error message", GetInnerException());
+                    break;
                 case "buttonError":
                     _logger.Error("This is a sample error message");
                     break;
@@ -53,6 +59,22 @@ namespace TestApp
                     _logger.Fatal(tbxCustomMessage.Text);
                     break;
             }
+        }
+
+        private static Exception GetInnerException()
+        {
+            return new Exception(
+                "Exception message",
+                new Exception("Inner exception"));
+        }
+
+        private static AggregateException GetAggregateException()
+        {
+            return new AggregateException(
+                "Aggregate exception message",
+                new Exception("Exception 1"),
+                new Exception("Exception 2"),
+                new Exception("Exception 3"));
         }
     }
 }

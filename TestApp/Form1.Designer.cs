@@ -39,6 +39,8 @@
             this.lblRandomMessageSize = new System.Windows.Forms.Label();
             this.buttonCustomMessage = new System.Windows.Forms.Button();
             this.tbxCustomMessage = new System.Windows.Forms.TextBox();
+            this.buttonAggregateError = new System.Windows.Forms.Button();
+            this.buttonInnerError = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonTrace
@@ -81,76 +83,98 @@
             this.buttonWarn.UseVisualStyleBackColor = true;
             this.buttonWarn.Click += new System.EventHandler(this.ButtonLog_Click);
             // 
+            // buttonAggregateError
+            // 
+            this.buttonAggregateError.Location = new System.Drawing.Point(34, 205);
+            this.buttonAggregateError.Name = "buttonAggregateError";
+            this.buttonAggregateError.Size = new System.Drawing.Size(212, 38);
+            this.buttonAggregateError.TabIndex = 4;
+            this.buttonAggregateError.Text = "Aggregate Error Event";
+            this.buttonAggregateError.UseVisualStyleBackColor = true;
+            this.buttonAggregateError.Click += new System.EventHandler(this.ButtonLog_Click);
+            // 
+            // buttonInnerError
+            // 
+            this.buttonInnerError.Location = new System.Drawing.Point(34, 248);
+            this.buttonInnerError.Name = "buttonInnerError";
+            this.buttonInnerError.Size = new System.Drawing.Size(212, 38);
+            this.buttonInnerError.TabIndex = 5;
+            this.buttonInnerError.Text = "Inner Error Event";
+            this.buttonInnerError.UseVisualStyleBackColor = true;
+            this.buttonInnerError.Click += new System.EventHandler(this.ButtonLog_Click);
+            // 
             // buttonError
             // 
-            this.buttonError.Location = new System.Drawing.Point(34, 202);
+            this.buttonError.Location = new System.Drawing.Point(34, 291);
             this.buttonError.Name = "buttonError";
             this.buttonError.Size = new System.Drawing.Size(212, 38);
-            this.buttonError.TabIndex = 4;
+            this.buttonError.TabIndex = 6;
             this.buttonError.Text = "Error Event";
             this.buttonError.UseVisualStyleBackColor = true;
             this.buttonError.Click += new System.EventHandler(this.ButtonLog_Click);
             // 
             // buttonFatal
             // 
-            this.buttonFatal.Location = new System.Drawing.Point(34, 246);
+            this.buttonFatal.Location = new System.Drawing.Point(34, 335);
             this.buttonFatal.Name = "buttonFatal";
             this.buttonFatal.Size = new System.Drawing.Size(212, 38);
-            this.buttonFatal.TabIndex = 5;
+            this.buttonFatal.TabIndex = 7;
             this.buttonFatal.Text = "Fatal Event";
             this.buttonFatal.UseVisualStyleBackColor = true;
             this.buttonFatal.Click += new System.EventHandler(this.ButtonLog_Click);
             // 
             // buttonRandomMessage
             // 
-            this.buttonRandomMessage.Location = new System.Drawing.Point(34, 290);
+            this.buttonRandomMessage.Location = new System.Drawing.Point(34, 379);
             this.buttonRandomMessage.Name = "buttonRandomMessage";
             this.buttonRandomMessage.Size = new System.Drawing.Size(212, 38);
-            this.buttonRandomMessage.TabIndex = 6;
+            this.buttonRandomMessage.TabIndex = 8;
             this.buttonRandomMessage.Text = "Send Random Message";
             this.buttonRandomMessage.UseVisualStyleBackColor = true;
             this.buttonRandomMessage.Click += new System.EventHandler(this.ButtonLog_Click);
             // 
             // tbxRandomMessageSize
             // 
-            this.tbxRandomMessageSize.Location = new System.Drawing.Point(153, 334);
+            this.tbxRandomMessageSize.Location = new System.Drawing.Point(153, 423);
             this.tbxRandomMessageSize.MaxLength = 7;
             this.tbxRandomMessageSize.Name = "tbxRandomMessageSize";
             this.tbxRandomMessageSize.Size = new System.Drawing.Size(93, 20);
-            this.tbxRandomMessageSize.TabIndex = 7;
+            this.tbxRandomMessageSize.TabIndex = 9;
             // 
             // lblRandomMessageSize
             // 
             this.lblRandomMessageSize.AutoSize = true;
-            this.lblRandomMessageSize.Location = new System.Drawing.Point(31, 337);
+            this.lblRandomMessageSize.Location = new System.Drawing.Point(31, 426);
             this.lblRandomMessageSize.Name = "lblRandomMessageSize";
             this.lblRandomMessageSize.Size = new System.Drawing.Size(116, 13);
-            this.lblRandomMessageSize.TabIndex = 8;
+            this.lblRandomMessageSize.TabIndex = 10;
             this.lblRandomMessageSize.Text = "Random Message Size";
             // 
             // buttonCustomMessage
             // 
-            this.buttonCustomMessage.Location = new System.Drawing.Point(34, 360);
+            this.buttonCustomMessage.Location = new System.Drawing.Point(34, 449);
             this.buttonCustomMessage.Name = "buttonCustomMessage";
             this.buttonCustomMessage.Size = new System.Drawing.Size(212, 38);
-            this.buttonCustomMessage.TabIndex = 9;
+            this.buttonCustomMessage.TabIndex = 11;
             this.buttonCustomMessage.Text = "Send Custom Message";
             this.buttonCustomMessage.UseVisualStyleBackColor = true;
             this.buttonCustomMessage.Click += new System.EventHandler(this.ButtonLog_Click);
             // 
             // tbxCustomMessage
             // 
-            this.tbxCustomMessage.Location = new System.Drawing.Point(34, 404);
+            this.tbxCustomMessage.Location = new System.Drawing.Point(34, 492);
             this.tbxCustomMessage.Multiline = true;
             this.tbxCustomMessage.Name = "tbxCustomMessage";
-            this.tbxCustomMessage.Size = new System.Drawing.Size(212, 236);
-            this.tbxCustomMessage.TabIndex = 10;
+            this.tbxCustomMessage.Size = new System.Drawing.Size(212, 148);
+            this.tbxCustomMessage.TabIndex = 12;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 652);
+            this.Controls.Add(this.buttonInnerError);
+            this.Controls.Add(this.buttonAggregateError);
             this.Controls.Add(this.tbxCustomMessage);
             this.Controls.Add(this.buttonCustomMessage);
             this.Controls.Add(this.lblRandomMessageSize);
@@ -186,6 +210,7 @@
         private System.Windows.Forms.Label lblRandomMessageSize;
         private System.Windows.Forms.Button buttonCustomMessage;
         private System.Windows.Forms.TextBox tbxCustomMessage;
+        private System.Windows.Forms.Button buttonAggregateError;
+        private System.Windows.Forms.Button buttonInnerError;
     }
 }
-
