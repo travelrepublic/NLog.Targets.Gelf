@@ -15,12 +15,14 @@ using Newtonsoft.Json;
 namespace NLog.Targets
 {
     [Target("Gelf")]
-    public class Gelf : Target
+    public sealed class Gelf : Target
     {
         #region Private Members
 
         private const int ShortMessageLength = 250;
         private const string GelfVersion = "1.1";
+
+        private readonly CultureInfo _cultureInfoGB = new CultureInfo("en-GB");
 
         private int MaxHeaderSize
         {
@@ -73,7 +75,7 @@ namespace NLog.Targets
             // Store the current UI culture
             var currentCulture = Thread.CurrentThread.CurrentCulture;
             // Set the current Locale to "en-GB" for proper date formatting
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
+            Thread.CurrentThread.CurrentCulture = _cultureInfoGB;
 
             var message = CreateGelfJsonFromLoggingEvent(logEvent.FormattedMessage, logEvent.Exception, logEvent.Level);
             try
@@ -83,7 +85,7 @@ namespace NLog.Targets
             catch (Exception e)
             {
                 // If there's an error then log the message.
-                string errorMessage = CreateGelfJsonFromLoggingEvent(e.ToString(), e, LogLevel.Fatal);
+                var errorMessage = CreateGelfJsonFromLoggingEvent(e.ToString(), e, LogLevel.Fatal);
                 SendMessage(GelfServer, Port, errorMessage);
             }
 
@@ -132,7 +134,7 @@ namespace NLog.Targets
             }
         }
 
-        private static byte[] GzipMessage(String message)
+        private static byte[] GzipMessage(string message)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var ms = new MemoryStream();
@@ -148,34 +150,33 @@ namespace NLog.Targets
 
         private static int GetGelfSeverity(LogLevel logLevel)
         {
-            var logLevelToReturn = GelfSeverity.Trace;
+            if (logLevel == LogLevel.Error)
+                return (int)GelfSeverity.Error;
+
+            if (logLevel == LogLevel.Warn)
+                return (int)GelfSeverity.Warning;
+           
+            if (logLevel == LogLevel.Info)
+                return (int) GelfSeverity.Info;
+
+            if (logLevel == LogLevel.Debug)
+                return (int) GelfSeverity.Debug;
 
             if (logLevel == LogLevel.Fatal)
-                logLevelToReturn = GelfSeverity.Emergency;
-            else if (logLevel == LogLevel.Error)
-                logLevelToReturn = GelfSeverity.Error;
-            else if (logLevel == LogLevel.Warn)
-                logLevelToReturn = GelfSeverity.Warning;
-            else if (logLevel == LogLevel.Info)
-                logLevelToReturn = GelfSeverity.Info;
-            else if (logLevel == LogLevel.Debug)
-                logLevelToReturn = GelfSeverity.Debug;
-            else if (logLevel == LogLevel.Trace)
-                logLevelToReturn = GelfSeverity.Trace;
+                return (int)GelfSeverity.Emergency;
 
-            return (int)logLevelToReturn;
+            return (int) GelfSeverity.Trace;
         }
 
         private string CreateGelfJsonFromLoggingEvent(string body, Exception exception, LogLevel level)
         {
             var shortMessage = body.Length > ShortMessageLength ? body.Substring(0, ShortMessageLength - 1) : body;
-            var machine = Dns.GetHostName();
 
             var gelfMessage = new GelfMessage
                 {
                     Facility = Facility ?? "GELF",
                     FullMessage = body,
-                    Host = machine,
+                    Host = Dns.GetHostName(),
                     Level = GetGelfSeverity(level),
                     ShortMessage = shortMessage,
                     TimeStamp = DateTime.Now,
@@ -235,7 +236,7 @@ namespace NLog.Targets
         private string GenerateMessageId(string serverHostName)
         {
             var md5String = String.Join("", MD5.Create().ComputeHash(Encoding.Default.GetBytes(serverHostName)).Select(it => it.ToString("x2")).ToArray());
-            var random = new Random((int)DateTime.Now.Ticks);
+            var random = new Random((int) DateTime.Now.Ticks);
             var t = DateTime.Now.Ticks % 1000000000;
             var s = String.Format("{0}{1}", md5String.Substring(0, 10), md5String.Substring(20, 10));
             var r = random.Next(10000000).ToString("00000000");
@@ -266,36 +267,5 @@ namespace NLog.Targets
         };
 
         #endregion
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    internal class GelfMessage
-    {
-        [JsonProperty("facility")]
-        public string Facility { get; set; }
-
-        [JsonProperty("full_message")]
-        public string FullMessage { get; set; }
-
-        [JsonProperty("host")]
-        public string Host { get; set; }
-
-        [JsonProperty("level")]
-        public int Level { get; set; }
-
-        [JsonProperty("short_message")]
-        public string ShortMessage { get; set; }
-
-        [JsonProperty("timestamp")]
-        public DateTime TimeStamp { get; set; }
-
-        [JsonProperty("version")]
-        public string Version { get; set; }
-
-        [JsonProperty("_exception_message")]
-        public string ExceptionMessage { get; set; }
-
-        [JsonProperty("_exception_stack_trace")]
-        public string StackTrace { get; set; }
     }
 }
