@@ -1,7 +1,6 @@
-using System;
 using Newtonsoft.Json;
 
-namespace NLog.Targets
+namespace NLog.Targets.Gelf
 {
     [JsonObject(MemberSerialization.OptIn)]
     internal class GelfMessage
@@ -21,16 +20,16 @@ namespace NLog.Targets
         [JsonProperty("short_message")]
         public string ShortMessage { get; set; }
 
-        [JsonProperty("timestamp")]
-        public DateTime TimeStamp { get; set; }
-
-        [JsonProperty("version")]
-        public string Version { get; set; }
-
         [JsonProperty("_exception_message")]
         public string ExceptionMessage { get; set; }
 
         [JsonProperty("_exception_stack_trace")]
         public string StackTrace { get; set; }
+
+        [JsonProperty("_logger")]
+        public string Logger { get; set; }
+
+        [JsonProperty("_notes")]
+        public string Notes { get; set; }
     }
 }
