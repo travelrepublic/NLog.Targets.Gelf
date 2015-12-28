@@ -17,7 +17,8 @@ namespace NLog.Targets.Gelf
     {
         #region Private Members
 
-        private static readonly Socket SocketClient = new Socket(SocketType.Dgram, ProtocolType.Udp);
+        private static readonly Socket SocketClient = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        private static readonly Socket SocketClientV6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
         private static readonly ConcurrentDictionary<string, IPEndPoint> EndPoints = new ConcurrentDictionary<string, IPEndPoint>();
 
         private const int ShortMessageLength = 250;
@@ -75,6 +76,7 @@ namespace NLog.Targets.Gelf
         private void SendMessage(string gelfServer, int serverPort, string message)
         {
             var endPoint = GetIPEndPoint(gelfServer, serverPort);
+            var thisSock = endPoint.AddressFamily == AddressFamily.InterNetworkV6 ? SocketClientV6 : SocketClient;
 
             var gzipMessage = GzipMessage(message);
             if (gzipMessage.Length > MaxChunkSize)
@@ -94,12 +96,12 @@ namespace NLog.Targets.Gelf
                     messageChunkPrefix.CopyTo(messageChunkFull, 0);
                     messageChunkSuffix.CopyTo(messageChunkFull, messageChunkPrefix.Length);
 
-                    SocketClient.SendTo(messageChunkFull, 0, messageChunkFull.Length, SocketFlags.None, endPoint);
+                    thisSock.SendTo(messageChunkFull, 0, messageChunkFull.Length, SocketFlags.None, endPoint);
                 }
             }
             else
             {
-                SocketClient.SendTo(gzipMessage, 0, gzipMessage.Length, SocketFlags.None, endPoint);
+                thisSock.SendTo(gzipMessage, 0, gzipMessage.Length, SocketFlags.None, endPoint);
             }
         }
 
