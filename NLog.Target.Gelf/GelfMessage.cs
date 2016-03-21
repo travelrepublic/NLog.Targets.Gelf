@@ -20,6 +20,9 @@ namespace NLog.Targets.Gelf
         [JsonProperty("short_message")]
         public string ShortMessage { get; set; }
 
+        [JsonProperty("_exception_type")]
+        public string ExceptionType { get; set; }
+
         [JsonProperty("_exception_message")]
         public string ExceptionMessage { get; set; }
 

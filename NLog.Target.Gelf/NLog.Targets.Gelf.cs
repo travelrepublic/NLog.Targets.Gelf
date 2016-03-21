@@ -163,6 +163,7 @@ namespace NLog.Targets.Gelf
                 exceptioToLog = exceptioToLog.InnerException;
             }
 
+            gelfMessage.ExceptionType = exceptioToLog.GetType().Name;
             gelfMessage.ExceptionMessage = exceptioToLog.Message;
             gelfMessage.StackTrace = exceptioToLog.StackTrace;
 
@@ -189,6 +190,7 @@ namespace NLog.Targets.Gelf
                 exceptioToLog = exceptioToLog.InnerException;
             }
 
+            gelfMessage.ExceptionType = exceptioToLog.GetType().Name;
             gelfMessage.ExceptionMessage = exceptioToLog.Message;
             gelfMessage.StackTrace = exceptioToLog.StackTrace;
 

@@ -32,7 +32,18 @@ namespace TestApp
                     Logger.Warn("This is a sample warn message");
                     break;
                 case "buttonError":
-                    Logger.Error("This is a sample error message");
+                    var one = 1;
+                    var zero = 0;
+
+                    try
+                    {
+                        var div = one / zero;
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.Error(exception, "This is a sample error message");
+                    }
+                    
                     break;
                 case "buttonFatal":
                     Logger.Fatal("This is a sample fatal message");
