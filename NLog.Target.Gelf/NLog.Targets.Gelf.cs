@@ -142,7 +142,8 @@ namespace NLog.Targets.Gelf
                     Host = Dns.GetHostName(),
                     Level = logEventInfo.Level.GelfSeverity(),
                     ShortMessage = shortMessage,
-                    Logger = logEventInfo.LoggerName ?? ""
+                    Logger = logEventInfo.LoggerName ?? "",
+                    Properties = logEventInfo.Properties.ToDictionary(x => "_" + x.Key, y => y.Value)
                 };
 
             if (logEventInfo.Properties != null)

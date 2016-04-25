@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace NLog.Targets.Gelf
@@ -34,5 +35,8 @@ namespace NLog.Targets.Gelf
 
         [JsonProperty("_notes")]
         public string Notes { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, object> Properties { get; set; }
     }
 }

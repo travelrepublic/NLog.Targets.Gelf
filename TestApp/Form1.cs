@@ -48,6 +48,9 @@ namespace TestApp
                 case "buttonFatal":
                     Logger.Fatal("This is a sample fatal message");
                     break;
+                case "buttonCustomFields":
+                    LogEventWithCustomProperties(LogLevel.Trace, "This is a message with custom fields");
+                    break;
                 case "buttonRandomMessage":
                     // 32 is a space, the rest are the upper case alphabet.
                     var byteValues = new[] {32, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90};
@@ -64,6 +67,14 @@ namespace TestApp
                     Logger.Fatal(tbxCustomMessage.Text);
                     break;
             }
+        }
+
+        private static void LogEventWithCustomProperties(LogLevel level, string message)
+        {
+            var theEvent = new LogEventInfo(level, "logger-name", message);
+            theEvent.Properties["MyCustomValue"] = "custom";
+            theEvent.Properties["AnotherCustomValue"] = "custom2";
+            Logger.Log(theEvent);
         }
     }
 }

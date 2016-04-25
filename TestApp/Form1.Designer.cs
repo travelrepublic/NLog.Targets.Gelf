@@ -39,6 +39,7 @@
             this.lblRandomMessageSize = new System.Windows.Forms.Label();
             this.buttonCustomMessage = new System.Windows.Forms.Button();
             this.tbxCustomMessage = new System.Windows.Forms.TextBox();
+            this.buttonCustomFields = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonTrace
@@ -103,7 +104,7 @@
             // 
             // buttonRandomMessage
             // 
-            this.buttonRandomMessage.Location = new System.Drawing.Point(34, 290);
+            this.buttonRandomMessage.Location = new System.Drawing.Point(34, 334);
             this.buttonRandomMessage.Name = "buttonRandomMessage";
             this.buttonRandomMessage.Size = new System.Drawing.Size(212, 38);
             this.buttonRandomMessage.TabIndex = 6;
@@ -113,7 +114,7 @@
             // 
             // tbxRandomMessageSize
             // 
-            this.tbxRandomMessageSize.Location = new System.Drawing.Point(153, 334);
+            this.tbxRandomMessageSize.Location = new System.Drawing.Point(153, 378);
             this.tbxRandomMessageSize.MaxLength = 7;
             this.tbxRandomMessageSize.Name = "tbxRandomMessageSize";
             this.tbxRandomMessageSize.Size = new System.Drawing.Size(93, 20);
@@ -122,7 +123,7 @@
             // lblRandomMessageSize
             // 
             this.lblRandomMessageSize.AutoSize = true;
-            this.lblRandomMessageSize.Location = new System.Drawing.Point(31, 337);
+            this.lblRandomMessageSize.Location = new System.Drawing.Point(31, 381);
             this.lblRandomMessageSize.Name = "lblRandomMessageSize";
             this.lblRandomMessageSize.Size = new System.Drawing.Size(116, 13);
             this.lblRandomMessageSize.TabIndex = 8;
@@ -130,7 +131,7 @@
             // 
             // buttonCustomMessage
             // 
-            this.buttonCustomMessage.Location = new System.Drawing.Point(34, 360);
+            this.buttonCustomMessage.Location = new System.Drawing.Point(34, 404);
             this.buttonCustomMessage.Name = "buttonCustomMessage";
             this.buttonCustomMessage.Size = new System.Drawing.Size(212, 38);
             this.buttonCustomMessage.TabIndex = 9;
@@ -140,17 +141,28 @@
             // 
             // tbxCustomMessage
             // 
-            this.tbxCustomMessage.Location = new System.Drawing.Point(34, 404);
+            this.tbxCustomMessage.Location = new System.Drawing.Point(34, 448);
             this.tbxCustomMessage.Multiline = true;
             this.tbxCustomMessage.Name = "tbxCustomMessage";
             this.tbxCustomMessage.Size = new System.Drawing.Size(212, 236);
             this.tbxCustomMessage.TabIndex = 10;
             // 
+            // buttonCustomFields
+            // 
+            this.buttonCustomFields.Location = new System.Drawing.Point(34, 290);
+            this.buttonCustomFields.Name = "buttonCustomFields";
+            this.buttonCustomFields.Size = new System.Drawing.Size(212, 38);
+            this.buttonCustomFields.TabIndex = 11;
+            this.buttonCustomFields.Text = "Custom Fields";
+            this.buttonCustomFields.UseVisualStyleBackColor = true;
+            this.buttonCustomFields.Click += new System.EventHandler(this.ButtonLog_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 652);
+            this.ClientSize = new System.Drawing.Size(284, 721);
+            this.Controls.Add(this.buttonCustomFields);
             this.Controls.Add(this.tbxCustomMessage);
             this.Controls.Add(this.buttonCustomMessage);
             this.Controls.Add(this.lblRandomMessageSize);
@@ -186,6 +198,7 @@
         private System.Windows.Forms.Label lblRandomMessageSize;
         private System.Windows.Forms.Button buttonCustomMessage;
         private System.Windows.Forms.TextBox tbxCustomMessage;
+        private System.Windows.Forms.Button buttonCustomFields;
     }
 }
 
