@@ -1,6 +1,6 @@
 #NLog.Targets.Gelf
 
-NLog.Targets.Gelf is a custom target for NLog version 2.0 and Graylog2.
+NLog.Targets.Gelf is a custom target for NLog version 4.3.4 and Graylog2.
 
 To use NLog.Targets.Gelf just add the following to your config file and place NLog.Targets.Gelf.dll in the same location as the NLog.dll file:
 
