@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NLog.Config;
 
 namespace NLog.Targets.Gelf
@@ -34,6 +35,10 @@ namespace NLog.Targets.Gelf
         public int Port { get; set; }
         public string Facility { get; set; }
         public int MaxChunkSize { get; set; }
+        
+        // Formatted area to insert static key/value pairs to be sent to via Gelf message
+        // Example config: parameters="app_platform, app_platform_value; something_else, something_else_value;"
+        public string Parameters { get; set; }
 
         #endregion
 
@@ -167,7 +172,17 @@ namespace NLog.Targets.Gelf
             gelfMessage.ExceptionMessage = exceptioToLog.Message;
             gelfMessage.StackTrace = exceptioToLog.StackTrace;
 
-            return JsonConvert.SerializeObject(gelfMessage);
+            var jGelfMessage = JObject.FromObject(gelfMessage);
+            
+            if (Parameters != null)
+            {
+                foreach (var parameter in ParseParameters())
+                {
+                    jGelfMessage.Add(parameter.Key, parameter.Value);
+                }
+            }
+
+            return JsonConvert.SerializeObject(jGelfMessage);
         }
 
         private string CreateFatalGelfJson(Exception exception)
@@ -181,20 +196,31 @@ namespace NLog.Targets.Gelf
                     ShortMessage = "Error sending message in NLog.Targets.Gelf"
                 };
 
-            if (exception == null) return JsonConvert.SerializeObject(gelfMessage);
-
-            var exceptioToLog = exception;
-
-            while (exceptioToLog.InnerException != null)
+            if (exception != null)
             {
-                exceptioToLog = exceptioToLog.InnerException;
+                var exceptioToLog = exception;
+
+                while (exceptioToLog.InnerException != null)
+                {
+                    exceptioToLog = exceptioToLog.InnerException;
+                }
+
+                gelfMessage.ExceptionType = exceptioToLog.GetType().Name;
+                gelfMessage.ExceptionMessage = exceptioToLog.Message;
+                gelfMessage.StackTrace = exceptioToLog.StackTrace;
+            }
+            
+            var jGelfMessage = JObject.FromObject(gelfMessage);
+
+            if (Parameters != null)
+            {
+                foreach (var parameter in ParseParameters())
+                {
+                    jGelfMessage.Add(parameter.Key, parameter.Value);
+                }
             }
 
-            gelfMessage.ExceptionType = exceptioToLog.GetType().Name;
-            gelfMessage.ExceptionMessage = exceptioToLog.Message;
-            gelfMessage.StackTrace = exceptioToLog.StackTrace;
-
-            return JsonConvert.SerializeObject(gelfMessage);
+            return JsonConvert.SerializeObject(jGelfMessage);
         }
 
         private static byte[] CreateChunkedMessagePart(string messageId, int chunkNumber, int chunkCount)
@@ -230,6 +256,11 @@ namespace NLog.Targets.Gelf
 
             //Message ID: 8 bytes
             return r.Substring(0, MaxMessageIdSize);
+        }
+
+        private Dictionary<string, string> ParseParameters()
+        {
+            return (from parameter in Parameters.Split(';') where !string.IsNullOrWhiteSpace(parameter) select parameter.Split(',')).ToDictionary(sects => sects[0].Trim(), sects => sects[1].Trim());
         }
 
         #endregion
