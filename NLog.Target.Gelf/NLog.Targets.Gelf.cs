@@ -17,7 +17,7 @@ namespace NLog.Targets.Gelf
     {
         #region Private Members
 
-        private static readonly Socket SocketClient = new Socket(SocketType.Dgram, ProtocolType.Udp);
+        private static readonly Socket SocketClient = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         private static readonly ConcurrentDictionary<string, IPEndPoint> EndPoints = new ConcurrentDictionary<string, IPEndPoint>();
 
         private const int ShortMessageLength = 250;
