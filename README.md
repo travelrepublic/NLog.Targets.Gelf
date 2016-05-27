@@ -12,7 +12,7 @@ To use NLog.Targets.Gelf just add the following to your config file and place NL
 	</extensions>
 
 	<targets>
-		<target name="Gelf" type="Gelf" gelfserver="" port="12201" maxchunksize="8154" graylogversion="0.9.5" />
+		<target name="Gelf" type="Gelf" gelfserver="" port="12201" maxchunksize="8154" />
 	</targets>
 	<rules>
 		<logger name="*" minLevel="Trace" appendTo="Gelf"/>
@@ -21,8 +21,6 @@ To use NLog.Targets.Gelf just add the following to your config file and place NL
 ```
 
 Just remember to add in your server URL (without http://) or IP address.  
-
-Because of differences in the Graylog2 server you need to specify the version as "0.9.5" or "0.9.6" otherwise long message chunking won't work.  The default is "0.9.5" if it's left out.
 
 This project was an amalgamation of [NLog.Targets.Syslog](https://github.com/graffen/NLog.Targets.Syslog) and [Gelf4Net](https://github.com/jjchiw/gelf4net).  
 
