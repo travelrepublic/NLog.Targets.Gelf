@@ -133,7 +133,13 @@ namespace NLog.Targets.Gelf
 
         private string CreateGelfJsonFromLoggingEvent(LogEventInfo logEventInfo)
         {
-            var shortMessage = logEventInfo.FormattedMessage.Length > ShortMessageLength ? logEventInfo.FormattedMessage.Substring(0, ShortMessageLength - 1) : logEventInfo.FormattedMessage;
+            string shortMessage = null;
+            if (logEventInfo.FormattedMessage != null)
+            {
+                shortMessage = logEventInfo.FormattedMessage.Length > ShortMessageLength
+                    ? logEventInfo.FormattedMessage.Substring(0, ShortMessageLength - 1)
+                    : logEventInfo.FormattedMessage;
+            }
 
             var gelfMessage = new GelfMessage
                 {
@@ -156,16 +162,16 @@ namespace NLog.Targets.Gelf
 
             if (logEventInfo.Exception == null) return JsonConvert.SerializeObject(gelfMessage);
 
-            var exceptioToLog = logEventInfo.Exception;
+            var exceptionToLog = logEventInfo.Exception;
 
-            while (exceptioToLog.InnerException != null)
+            while (exceptionToLog.InnerException != null)
             {
-                exceptioToLog = exceptioToLog.InnerException;
+                exceptionToLog = exceptionToLog.InnerException;
             }
 
-            gelfMessage.ExceptionType = exceptioToLog.GetType().Name;
-            gelfMessage.ExceptionMessage = exceptioToLog.Message;
-            gelfMessage.StackTrace = exceptioToLog.StackTrace;
+            gelfMessage.ExceptionType = exceptionToLog.GetType().Name;
+            gelfMessage.ExceptionMessage = exceptionToLog.Message;
+            gelfMessage.StackTrace = exceptionToLog.StackTrace;
 
             return JsonConvert.SerializeObject(gelfMessage);
         }
