@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -151,6 +152,9 @@ namespace NLog.Targets.Gelf
                     Logger = logEventInfo.LoggerName ?? ""
                 };
 
+            if (Activity.Current?.RootId != null)
+                gelfMessage.RequestId = Activity.Current?.RootId;
+
             if (logEventInfo.Properties != null)
             {
                 object notes;
@@ -186,6 +190,9 @@ namespace NLog.Targets.Gelf
                     Level = LogLevel.Fatal.GelfSeverity(),
                     ShortMessage = "Error sending message in NLog.Targets.Gelf"
                 };
+
+            if (Activity.Current?.RootId != null)
+                gelfMessage.RequestId = Activity.Current?.RootId;
 
             if (exception == null) return JsonConvert.SerializeObject(gelfMessage);
 
