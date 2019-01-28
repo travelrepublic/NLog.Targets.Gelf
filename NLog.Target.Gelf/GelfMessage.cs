@@ -11,6 +11,9 @@ namespace NLog.Targets.Gelf
         [JsonProperty("full_message")]
         public string FullMessage { get; set; }
 
+        [JsonProperty("request_id")]
+        public string RequestId { get; set; }
+
         [JsonProperty("host")]
         public string Host { get; set; }
 
