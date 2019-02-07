@@ -18,6 +18,7 @@ namespace NLog.Targets.Gelf
     {
         #region Private Members
 
+        private static readonly string HostName = Dns.GetHostName();
         private static readonly Socket SocketClient = new Socket(SocketType.Dgram, ProtocolType.Udp);
         private static readonly ConcurrentDictionary<string, IPEndPoint> EndPoints = new ConcurrentDictionary<string, IPEndPoint>();
 
@@ -146,7 +147,7 @@ namespace NLog.Targets.Gelf
                 {
                     Facility = Facility ?? "GELF",
                     FullMessage = logEventInfo.FormattedMessage,
-                    Host = Dns.GetHostName(),
+                    Host = HostName,
                     Level = logEventInfo.Level.GelfSeverity(),
                     ShortMessage = shortMessage,
                     Logger = logEventInfo.LoggerName ?? ""
@@ -186,7 +187,7 @@ namespace NLog.Targets.Gelf
                 {
                     Facility = Facility ?? "GELF",
                     FullMessage = "Error sending message in NLog.Targets.Gelf",
-                    Host = Dns.GetHostName(),
+                    Host = HostName,
                     Level = LogLevel.Fatal.GelfSeverity(),
                     ShortMessage = "Error sending message in NLog.Targets.Gelf"
                 };
