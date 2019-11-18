@@ -8,6 +8,9 @@ namespace NLog.Targets.Gelf
         [JsonProperty("facility")]
         public string Facility { get; set; }
 
+        [JsonProperty("app_version")]
+        public string Version { get; set; }
+
         [JsonProperty("full_message")]
         public string FullMessage { get; set; }
 

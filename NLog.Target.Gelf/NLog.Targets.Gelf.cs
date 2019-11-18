@@ -35,6 +35,7 @@ namespace NLog.Targets.Gelf
 
         public int Port { get; set; }
         public string Facility { get; set; }
+        public string Version { get; set; }
         public int MaxChunkSize { get; set; }
 
         #endregion
@@ -146,6 +147,7 @@ namespace NLog.Targets.Gelf
             var gelfMessage = new GelfMessage
                 {
                     Facility = Facility ?? "GELF",
+                    Version = Version,
                     FullMessage = logEventInfo.FormattedMessage,
                     Host = HostName,
                     Level = logEventInfo.Level.GelfSeverity(),
