@@ -22,6 +22,11 @@ namespace NLog.Targets.Gelf
         private static readonly Socket SocketClient = new Socket(SocketType.Dgram, ProtocolType.Udp);
         private static readonly ConcurrentDictionary<string, IPEndPoint> EndPoints = new ConcurrentDictionary<string, IPEndPoint>();
 
+        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
         private const int ShortMessageLength = 250;
         private const int MaxMessageIdSize = 8;
         private const int MaxNumberOfChunksAllowed = 128;
@@ -35,6 +40,7 @@ namespace NLog.Targets.Gelf
 
         public int Port { get; set; }
         public string Facility { get; set; }
+        public string Version { get; set; }
         public int MaxChunkSize { get; set; }
 
         #endregion
@@ -146,6 +152,7 @@ namespace NLog.Targets.Gelf
             var gelfMessage = new GelfMessage
                 {
                     Facility = Facility ?? "GELF",
+                    Version = Version,
                     FullMessage = logEventInfo.FormattedMessage,
                     Host = HostName,
                     Level = logEventInfo.Level.GelfSeverity(),
@@ -165,7 +172,7 @@ namespace NLog.Targets.Gelf
                 }
             }
 
-            if (logEventInfo.Exception == null) return JsonConvert.SerializeObject(gelfMessage);
+            if (logEventInfo.Exception == null) return JsonConvert.SerializeObject(gelfMessage, JsonSerializerSettings);
 
             var exceptionToLog = logEventInfo.Exception;
 
@@ -178,7 +185,7 @@ namespace NLog.Targets.Gelf
             gelfMessage.ExceptionMessage = exceptionToLog.Message;
             gelfMessage.StackTrace = exceptionToLog.StackTrace;
 
-            return JsonConvert.SerializeObject(gelfMessage);
+            return JsonConvert.SerializeObject(gelfMessage, JsonSerializerSettings);
         }
 
         private string CreateFatalGelfJson(Exception exception)
@@ -195,7 +202,7 @@ namespace NLog.Targets.Gelf
             if (Activity.Current?.RootId != null)
                 gelfMessage.RequestId = Activity.Current?.RootId;
 
-            if (exception == null) return JsonConvert.SerializeObject(gelfMessage);
+            if (exception == null) return JsonConvert.SerializeObject(gelfMessage, JsonSerializerSettings);
 
             var exceptioToLog = exception;
 
@@ -208,7 +215,7 @@ namespace NLog.Targets.Gelf
             gelfMessage.ExceptionMessage = exceptioToLog.Message;
             gelfMessage.StackTrace = exceptioToLog.StackTrace;
 
-            return JsonConvert.SerializeObject(gelfMessage);
+            return JsonConvert.SerializeObject(gelfMessage, JsonSerializerSettings);
         }
 
         private static byte[] CreateChunkedMessagePart(string messageId, int chunkNumber, int chunkCount)
