@@ -157,7 +157,8 @@ namespace NLog.Targets.Gelf
                     Host = HostName,
                     Level = logEventInfo.Level.GelfSeverity(),
                     ShortMessage = shortMessage,
-                    Logger = logEventInfo.LoggerName ?? ""
+                    Logger = logEventInfo.LoggerName ?? "",
+                    Properties = logEventInfo.Properties.ToDictionary(x => "_" + x.Key, y => y.Value)
                 };
 
             if (Activity.Current?.RootId != null)
